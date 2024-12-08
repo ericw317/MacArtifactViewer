@@ -4,6 +4,7 @@ from CustomLibs import time_conversion
 import os
 import shutil
 import json
+import plistlib
 
 # get bookmarks parsing
 def get_bookmarks_path(root, user, browser):
@@ -87,3 +88,51 @@ def collect_bookmarks(drive, user, browser):
         if os.path.exists(destination):
             os.remove(destination)
         return 0
+
+def safari_bookmarks(root, user):
+    def parse_plist(plist_path):
+        # Load the plist from file
+        with open(plist_path, 'rb') as file:
+            plist = plistlib.load(file)
+
+        # Find and parse the BookmarksBar
+        bookmarks_bar = find_bookmarks_bar(plist)
+        bookmarks = parse_bookmarks(bookmarks_bar) if bookmarks_bar else []
+        return bookmarks
+
+    def find_bookmarks_bar(plist):
+        # Traverse to find the "BookmarksBar" section
+        children = plist.get('Children', [])
+        for child in children:
+            if child.get('Title') == 'BookmarksBar':
+                return child
+        return None
+
+    def parse_bookmarks(bookmark_dict):
+        # This function will now process a single node that represents the BookmarksBar
+        bookmarks = []
+        for child in bookmark_dict.get('Children', []):
+            bookmarks.append({
+                'title': child.get('URIDictionary', {}).get('title', 'No Title'),
+                'url': child.get('URLString', 'No URL')
+            })
+        return bookmarks
+
+    bookmarks_path = rf"{root}\Users\{user}\Library\Safari\Bookmarks.plist"
+    bookmarks = parse_plist(bookmarks_path)
+
+    # add data to list
+    bookmark_list = []
+    for bookmark in bookmarks:
+        bookmark_list.append([bookmark["title"], bookmark["url"]])
+
+    # format output
+    output = display_functions.two_values("Title", "URL", bookmark_list)
+    formatted_output = "\n".join(output) + "\n"
+    return formatted_output
+
+def main(root, user, browser):
+    if browser == "Safari":
+        return safari_bookmarks(root, user)
+    else:
+        return collect_bookmarks(root, user, browser)

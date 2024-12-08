@@ -37,7 +37,8 @@ def search_internet(root, user):
             "chrome": f"{root}\\Users\\{user}\\Library\\Application Support\\Google\\Chrome",
             "edge": f"{root}\\Users\\{user}\\Library\\Application Support\\Microsoft Edge",
             "brave": f"{root}\\Users\\{user}\\Library\\Application Support\\BraveSoftware\\Brave-Browser",
-            "firefox": f"{root}\\Users\\{user}\\Library\\Application Support\\Firefox"
+            "firefox": f"{root}\\Users\\{user}\\Library\\Application Support\\Firefox",
+            "safari": f"{root}\\Users\\{user}\\Library\\Safari"
         }
 
         # get list of available browsers
@@ -50,7 +51,18 @@ def search_internet(root, user):
             browser_list.append("Brave")
         if os.path.exists(internet_locations["firefox"]):
             browser_list.append("Firefox")
+        if os.path.exists(internet_locations["safari"]):
+            browser_list.append("Safari")
 
         return browser_list
     except Exception:
+        return False
+
+# check if bash history file exists and is not empty
+def search_bash_history(root, user):
+    bash_history_path = f"{root}\\Users\\{user}\\.bash_history"
+
+    if os.path.exists(bash_history_path) and os.path.getsize(bash_history_path) > 0:
+        return True
+    else:
         return False

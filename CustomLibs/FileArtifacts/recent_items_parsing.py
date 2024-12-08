@@ -2,45 +2,48 @@ from CustomLibs import display_functions
 import os
 
 def parse_sfl2(sfl2_file):
-    # read data
-    with open(sfl2_file, 'rb') as file:
-        data = file.read()
+    try:
+        # read data
+        with open(sfl2_file, 'rb') as file:
+            data = file.read()
 
-    # initialize buffer and contexts
-    data_buffer = bytearray()
-    name_header = "636F6D2E6170706C652E6170702D73616E64626F782E72656164"
-    extracted_value = bytearray()
-    extracted_data = []
-    header_found = False
-    reading = False
-    find_uuid = False
+        # initialize buffer and contexts
+        data_buffer = bytearray()
+        name_header = "636F6D2E6170706C652E6170702D73616E64626F782E72656164"
+        extracted_value = bytearray()
+        extracted_data = []
+        header_found = False
+        reading = False
+        find_uuid = False
 
-    # loop through data
-    for byte in data:
-        data_buffer.append(byte)  # add each new byte to the buffer
+        # loop through data
+        for byte in data:
+            data_buffer.append(byte)  # add each new byte to the buffer
 
-        if header_found:
-            if format(byte, '02x').upper() == "2F":
-                reading = True
+            if header_found:
+                if format(byte, '02x').upper() == "2F":
+                    reading = True
 
-        if reading:
-            if not find_uuid:
-                if format(byte, '02x') != "00":
-                    extracted_value.append(byte)
-                else:
-                    extracted_data.append(extracted_value.decode('utf-8', errors='ignore'))
-                    extracted_value = bytearray()
-                    reading = False
-                    header_found = False
+            if reading:
+                if not find_uuid:
+                    if format(byte, '02x') != "00":
+                        extracted_value.append(byte)
+                    else:
+                        extracted_data.append(extracted_value.decode('utf-8', errors='ignore'))
+                        extracted_value = bytearray()
+                        reading = False
+                        header_found = False
 
-        # keep buffer at 26 bytes
-        if len(data_buffer) > 26:
-            data_buffer.pop(0)
+            # keep buffer at 26 bytes
+            if len(data_buffer) > 26:
+                data_buffer.pop(0)
 
-        if data_buffer.hex().upper() == name_header:
-            header_found = True
+            if data_buffer.hex().upper() == name_header:
+                header_found = True
 
-    return extracted_data
+        return extracted_data
+    except Exception:
+        return ""
 
 def parse_recent(root, user):
     # set path to recent items

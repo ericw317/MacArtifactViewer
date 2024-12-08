@@ -2,6 +2,7 @@ import datetime as dt
 from zoneinfo import ZoneInfo
 from CustomLibs import config
 from datetime import datetime, timedelta
+import tzdata
 
 # convert FILETIME format to readable
 def filetime_convert(filetime):
@@ -52,3 +53,14 @@ def hex_filetime(filetime_hex):
     converted_time = filetime_epoch + timedelta(seconds=filetime / 10 ** 7)
 
     return converted_time.replace(microsecond=0)
+
+def convert_apple_epoch(timestamp):
+    epoch_start = dt.datetime(2001, 1, 1, tzinfo=dt.timezone.utc)
+    readable_time = epoch_start + dt.timedelta(seconds=timestamp)
+    readable_time = readable_time.replace(microsecond=0)
+
+    if config.timezone != "UTC":
+        local_time = readable_time.astimezone(ZoneInfo(config.timezone))
+        return local_time
+    else:
+        return readable_time

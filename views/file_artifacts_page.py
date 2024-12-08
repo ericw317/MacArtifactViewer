@@ -3,6 +3,7 @@ from CustomLibs import config
 from CustomLibs import artifact_search as AS
 from CustomLibs.FileArtifacts import recent_items_parsing
 import os
+import shutil
 
 # functions
 def clear_fields():
@@ -71,7 +72,7 @@ def user_change(e):
 
 def grey_checkboxes(initial=False):
     # set all checkboxes to false and disabled
-    checkboxes = [c_recent]
+    checkboxes = [c_recent, c_bash_history]
     for checkbox in checkboxes:
         checkbox.disabled = True
         checkbox.value = False
@@ -85,18 +86,25 @@ def search_artifacts(root, user=None):
     if AS.search_recent_items(root, user):
         c_recent.disabled = False
         c_recent.update()
+    if AS.search_bash_history(root, user):
+        c_bash_history.disabled = False
+        c_bash_history.update()
 
 def open_text(file_path):
     if switch_open_file.value:
         os.startfile(file_path)
 
-def parse(drive, user):
+def parse(root, user):
     open_dlg_loading()
     success = False
     if c_recent.value:
-        output = recent_items_parsing.main(drive, user)
+        output = recent_items_parsing.main(root, user)
         config.export_data(output, f"{dd_users.value} Recent Data.txt", config.output_path)
         open_text(os.path.join(config.output_path, f"{dd_users.value} Recent Data.txt"))
+        success = True
+    if c_bash_history.value:
+        shutil.copy(rf"{root}\Users\{user}\.bash_history", os.path.join(config.output_path, f"{user} Bash History.txt"))
+        open_text(os.path.join(config.output_path, f"{user} Bash History.txt"))
         success = True
 
     dlg_loading.open = False
@@ -126,6 +134,7 @@ b_parse = ft.ElevatedButton(
 
 # checkboxes
 c_recent = ft.Checkbox(label="Recent Items", disabled=True)
+c_bash_history = ft.Checkbox(label="Bash History", disabled=True)
 
 # switches
 switch_open_file = ft.Switch(label="Open data after parsing", value=False)
@@ -148,7 +157,7 @@ def file_artifacts_page(router):
             t_root_dir, dd_users
         ], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([
-            c_recent
+            c_recent, c_bash_history
         ], alignment=ft.MainAxisAlignment.CENTER),
         ft.Row([
             switch_open_file

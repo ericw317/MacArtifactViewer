@@ -101,6 +101,15 @@ def search_artifacts(drive, user=None):
     else:
         ungrey_checkboxes()
 
+    # grey out unavailable data for Safari
+    if dd_browser.value == "Safari":
+        c_downloads.disabled = True
+        c_downloads.value = False
+        c_logins.disabled = True
+        c_logins.value = False
+        c_downloads.update()
+        c_logins.update()
+
 def grey_checkboxes(initial=False):
     # set all checkboxes to false and disabled
     checkboxes = [c_history, c_downloads, c_bookmarks, c_logins]
@@ -115,6 +124,7 @@ def ungrey_checkboxes(initial=False):
     checkboxes = [c_history, c_downloads, c_bookmarks, c_logins]
     for checkbox in checkboxes:
         checkbox.disabled = False
+        checkbox.value = False
         checkbox.update()
 
 def open_text(file_path):
@@ -126,7 +136,7 @@ def parse(drive, user):
     success = False
 
     if c_history.value:
-        output = history_parsing.collect_history(drive, user, dd_browser.value)
+        output = history_parsing.main(drive, user, dd_browser.value)
         export_data(output, f"{dd_users.value} {dd_browser.value} History.txt")
         open_text(os.path.join(config.output_path, f"{dd_users.value} {dd_browser.value} History.txt"))
         success = True
@@ -136,7 +146,7 @@ def parse(drive, user):
         open_text(os.path.join(config.output_path, f"{user} {dd_browser.value} Downloads.txt"))
         success = True
     if c_bookmarks.value:
-        output = bookmarks_parsing.collect_bookmarks(drive, user, dd_browser.value)
+        output = bookmarks_parsing.main(drive, user, dd_browser.value)
         if output != 0:
             export_data(output, f"{user} {dd_browser.value} Bookmarks.txt")
             open_text(os.path.join(config.output_path, f"{user} {dd_browser.value} Bookmarks.txt"))

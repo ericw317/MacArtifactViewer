@@ -1,6 +1,7 @@
 import sqlite3
 from CustomLibs import display_functions
 from CustomLibs import time_conversion as TC
+from CustomLibs import config
 import os
 import shutil
 
@@ -21,7 +22,7 @@ def get_history_path(root, user, browser):
                     return full_firefox_path
 
 # collect internet history
-def collect_history(drive, user, browser, firefox=False):
+def collect_history(drive, user, browser):
     # copy history file
     history_path = get_history_path(drive, user, browser)
     destination = os.path.join(os.getcwd(), "history_copy")
@@ -85,3 +86,70 @@ def collect_history(drive, user, browser, firefox=False):
 
     formatted_output = "\n".join(output) + "\n"
     return formatted_output
+
+def safari_history(root, user):
+    # copy history file
+    history_path = rf"{root}\Users\{user}\Library\Safari\History.db"
+    destination = os.path.join(os.getcwd(), "history_copy")
+    shutil.copy(history_path, destination)
+
+    # extract data
+    history_visits = config.parse_sql(destination,
+                                      """
+                                      SELECT
+                                          title, visit_time, history_item
+                                      FROM
+                                          history_visits
+                                      """
+                                      )
+    history_items = config.parse_sql(destination,
+                                     """
+                                     SELECT
+                                         url, visit_count, id
+                                     FROM
+                                         history_items
+                                     """
+                                     )
+
+    # remove history copy
+    if os.path.exists("history_copy"):
+        os.remove("history_copy")
+
+    # create dictionary for item ID mapping
+    item_dict = {}
+    for item in history_items:
+        item_id = item[2]
+        item_dict[item_id] = item
+
+    # combine data
+    for visit in history_visits:
+        visit_id = visit[2]
+        item = item_dict.get(visit_id)
+        if item:
+            item_url = item[0]
+            item_visit_count = item[1]
+            visit.extend([item_url, item_visit_count])
+
+    history_list = []
+    for entry in history_visits:
+        title = entry[0]
+        timestamp = entry[1]
+        url = entry[3]
+        visit_count = entry[4]
+
+        # convert timestamp
+        timestamp = str(TC.convert_apple_epoch(timestamp))
+
+        history_list.append([str(title), str(timestamp), str(visit_count), str(url)])
+
+    # format output
+    output = display_functions.four_values("Title", "Timestamp", "Visit Count", "URL",
+                                           history_list)
+    formatted_output = "\n".join(output) + "\n"
+    return formatted_output
+
+def main(root, user, browser):
+    if browser == "Safari":
+        return safari_history(root, user)
+    else:
+        return collect_history(root, user, browser)
