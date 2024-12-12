@@ -5,20 +5,20 @@ Parse forensic artifacts on a MacOS system. This program does not currently anal
 Current features:
 
 System Artifacts:
-	- Bluetooth devices
-	- Last login
-	- Network Interfaces
+- Bluetooth devices
+- Last login
+- Network Interfaces
 
 User Artifacts:
-	- Recent Items
-	- Bash and Zsh History
-	- Trash
+- Recent Items
+- Bash and Zsh History
+- Trash
 
 Internet Artifacts:
-	- History
-	- Downloads
-	- Bookmarks
-	- Login Data
+- History
+- Downloads
+- Bookmarks
+- Login Data
 
 Spotlight-V100 Parsing
 
