@@ -2,7 +2,7 @@ import datetime as dt
 from zoneinfo import ZoneInfo
 from CustomLibs import config
 from datetime import datetime, timedelta
-import tzdata
+import pytz
 
 # convert FILETIME format to readable
 def filetime_convert(filetime):
@@ -64,3 +64,20 @@ def convert_apple_epoch(timestamp):
         return local_time
     else:
         return readable_time
+
+def convert_plain_date(timestamp):
+    try:
+        # parse date
+        parsed_date = datetime.strptime(timestamp, "%a %b %d %H:%M:%S %Y")
+
+        # set UTC
+        source_timezone = pytz.UTC
+        local_date = source_timezone.localize(parsed_date)
+
+        # convert timezone
+        timezone = pytz.timezone(config.timezone)
+        converted_date = local_date.astimezone(timezone)
+
+        return converted_date
+    except ValueError:
+        return timestamp

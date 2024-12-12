@@ -46,6 +46,7 @@ def get_file(e: ft.FilePickerResultEvent):
 def get_root_dir(e: ft.FilePickerResultEvent):
     if e.path:
         # clear users dropdown and set root directory path
+        config.root_dir = e.path
         if os.path.exists(os.path.join(e.path, r".Spotlight-V100\Store-V2")):
             t_root_dir.value = e.path
             SS.copy_and_parse_database(e.path)

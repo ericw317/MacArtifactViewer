@@ -1,9 +1,10 @@
 from typing import Callable, Any
 import flet as ft
 from enum import Enum
-import views.file_artifacts_page as file_artifacts_page
+import views.system_artifacts_page as system_artifacts_page
 import views.internet_artifacts_page as internet_artifacts_page
 import views.spotlight_search as spotlight_search_page
+import views.user_artifacts_page as user_artifacts_page
 
 class DataStrategyEnum(Enum):
     QUERY = 0
@@ -36,9 +37,10 @@ class Router:
             self.data[key] = value.replace('+', ' ')
 
         # clear text fields
-        file_artifacts_page.clear_fields()
+        system_artifacts_page.clear_fields()
         internet_artifacts_page.clear_fields()
         spotlight_search_page.clear_fields()
+        user_artifacts_page.clear_fields()
 
         self.body.content = self.routes[_page](self)
         self.body.update()

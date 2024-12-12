@@ -4,7 +4,7 @@ import os
 def print_list(list):
     string = ""
     for element in list:
-        string += f"\n{element}"
+        string += f"{element}\n"
     return string
 
 # print list numbered

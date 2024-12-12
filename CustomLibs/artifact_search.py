@@ -61,8 +61,28 @@ def search_internet(root, user):
 # check if bash history file exists and is not empty
 def search_bash_history(root, user):
     bash_history_path = f"{root}\\Users\\{user}\\.bash_history"
+    zsh_history_path = f"{root}\\Users\\{user}\\.zsh_history"
 
     if os.path.exists(bash_history_path) and os.path.getsize(bash_history_path) > 0:
         return True
+    elif os.path.exists(zsh_history_path) and os.path.getsize(zsh_history_path) > 0:
+        return True
     else:
         return False
+
+def search_trashes(root, user):
+    if os.path.exists(f"{root}\\Users\\{user}\\.Trash"):
+        return True
+    return False
+
+def search_plists(root):
+    plists_found = []
+    plists_dict = {'bluetooth': fr"{root}\Library\Preferences\com.apple.Bluetooth.plist",
+                   'loginwindow': fr"{root}\Library\Preferences\com.apple.loginwindow.plist",
+                   'network_interfaces': fr"{root}\Library\Preferences\SystemConfiguration\NetworkInterfaces.plist"}
+
+    for plist in plists_dict:
+        if os.path.exists(plists_dict[plist]):
+            plists_found.append(plist)
+
+    return plists_found

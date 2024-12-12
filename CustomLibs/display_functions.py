@@ -102,6 +102,48 @@ def four_values(name1, name2, name3, name4, list_name):
 
     return output
 
+def five_values(name1, name2, name3, name4, name5, list_name):
+    # getting spacing sizes
+    list1_space = len(name1)
+    for value in list_name:
+        if len(value[0]) > list1_space:
+            list1_space = len(value[0])
+
+    list2_space = len(name2)
+    for value in list_name:
+        if len(value[1]) > list2_space:
+            list2_space = len(value[1])
+
+    list3_space = len(name3)
+    for value in list_name:
+        if len(value[2]) > list3_space:
+            list3_space = len(value[2])
+
+    list4_space = len(name4)
+    for value in list_name:
+        if len(value[3]) > list4_space:
+            list4_space = len(value[3])
+
+    list5_space = len(name5)
+    for value in list_name:
+        if len(value[4]) > list5_space:
+            list5_space = len(value[4])
+
+    total_space = list1_space + list2_space + list3_space + list4_space + list5_space + 15
+
+    # display values
+    output = []
+    output.append(f"{name1:<{list1_space}} | {name2:<{list2_space}} | {name3:<{list3_space}} | {name4:<{list4_space}} | "
+                  f"{name5}")
+    output.append("-" * total_space)
+    for value in list_name:
+        output.append(f"{value[0]:<{list1_space}} | {value[1]:<{list2_space}} | {value[2]:<{list3_space}} | {value[3]:<{list4_space}} | "
+                      f"{value[4]:<{list5_space}}")
+        output.append("-" * total_space)
+    output.append("")
+
+    return output
+
 def nine_values(name1, name2, name3, name4, name5, name6, name7, name8, name9, list_name):
     # getting spacing sizes
     list1_space = len(name1)

@@ -5,6 +5,7 @@ timezone = "America/New_York"
 output_path = ""
 settings_path = os.path.join(os.path.expanduser("~"), ".MacArtifactViewer", "settings.json")
 base_path = os.path.join(os.path.expanduser("~"), ".MacArtifactViewer")
+root_dir = None
 
 
 def export_data(data, filename, output_path):

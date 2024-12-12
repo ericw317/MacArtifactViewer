@@ -34,9 +34,10 @@ get_settings()
 
 from user_controls.routes import router
 from user_controls.app_bar import NavBar
-import views.file_artifacts_page as file_artifacts_page
+import views.system_artifacts_page as system_artifacts_page
 import views.internet_artifacts_page as internet_artifacts_page
-import views.spotlight_search as jumplists_page
+import views.spotlight_search as spotlight_search_page
+import views.user_artifacts_page as user_artifacts_page
 import views.settings_page as settings_page
 
 def main(page: ft.Page):
@@ -56,9 +57,10 @@ def main(page: ft.Page):
         ), ft.Container(padding=50.5)
     )
 
-    file_artifacts_page.get_page(page)
+    system_artifacts_page.get_page(page)
     internet_artifacts_page.get_page(page)
-    jumplists_page.get_page(page)
+    spotlight_search_page.get_page(page)
+    user_artifacts_page.get_page(page)
     settings_page.get_page(page)
     page.go('/')
 
